@@ -1,1 +1,1 @@
-# volunteerConnectPlateform
+# volunteerConnectPlatform
