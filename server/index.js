@@ -6,7 +6,7 @@ import connectDB from './config/database.js';
 import authRoutes from './routes/auth.route.js';
 import errorHandler from './middleware/errorHandler.js';
 import profileRoutes from './routes/profile.route.js';
-
+import opportunityRoutes from './routes/opportunity.route.js';
 // Load environment variables
 dotenv.config();
 
@@ -40,7 +40,7 @@ console.log("first")
 app.use('/api/auth', authRoutes);
 console.log("second1")
 app.use('/api/profile', profileRoutes);
-// app.use('/api/opportunities', opportunityRoutes);
+app.use('/api/opportunities', opportunityRoutes);
 // app.use('/api', matchRoutes);
 
 // Catch-all handler for undefined routes

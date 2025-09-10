@@ -45,7 +45,7 @@ const opportunitySchema = new mongoose.Schema({
         coordinates: {
             type: pointSchema,
             index: '2dsphere',
-            required: true
+            // required: true
         }
     },
     requiredSkills: [{
