@@ -1,47 +1,62 @@
+// server/index.js
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/database.js';
+import authRoutes from './routes/auth.route.js';
+import errorHandler from './middleware/errorHandler.js';
 
+// Load environment variables
 dotenv.config();
-
-// Import Route Files (We will create these later)
-// import authRoutes from './routes/auth.js';
 
 // Initialize Express application
 const app = express();
 
-// Connect to the database
 connectDB();
 
 // Middlewares
-// CORS middleware to allow requests from our frontend (we'll adjust this later for production)
 app.use(cors());
-// Body parser middleware to read JSON payloads from requests
-app.use(express.json({ limit: '10mb' })); // 'limit' option handles large payloads
-
-// Basic route for health check - Always good practice for monitoring
+// Add this right after your CORS middleware in server/index.js
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+});
+app.use(express.json({ limit: '10mb' }));
+// Add this before your other routes in server/index.js
+// Add this before your other routes in server/index.js
+app.get('/api/test', (req, res) => {
+    console.log('Test route hit');
+    res.json({ message: 'Test successful', timestamp: new Date().toISOString() });
+});
+// Health check route
 app.get('/api/health', (req, res) => {
     res.status(200).json({ success: true, message: 'Server is up and running!' });
 });
 
-// API Routes - *We will mount these in the next steps*
-// app.use('/api/auth', authRoutes);
 
-// Catch-all handler for undefined routes (404)
+// API Routes
+console.log("first")
+app.use('/api/auth', authRoutes);
+console.log("second1")
+// app.use('/api/profile', profileRoutes);
+// app.use('/api/opportunities', opportunityRoutes);
+// app.use('/api', matchRoutes);
+
+// Catch-all handler for undefined routes
 app.use('/', (req, res) => {
-    res.status(404).json({ success: false, message: 'API endpoint does not exist' });
+    res.status(404).json({
+        success: false,
+        message: `Route ${req.originalUrl} not found`
+    });
 });
 
-// Global Error Handling Middleware
-// This is a basic catcher. We will enhance it later.
-app.use((error, req, res, next) => {
-    console.error('Unhandled Error:', error);
-    res.status(500).json({ success: false, message: 'An unexpected internal server error occurred' });
-});
+// Use the global error handling middleware (must be the last middleware)
+app.use(errorHandler);
 
 // Define the port
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT
+// || 5000;
 
 // Start the server
-app.listen(PORT, () => console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`));
+app.listen(PORT,
+    () => console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`));

@@ -1,0 +1,11 @@
+// server/middleware/validation/validateRequest.js
+import { validationResult } from 'express-validator';
+import { ValidationError } from '../../utils/AppError.js';
+
+export const validateRequest = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return next(new ValidationError('Validation failed', errors.array()));
+    }
+    next();
+};
