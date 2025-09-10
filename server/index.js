@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/database.js';
 import authRoutes from './routes/auth.route.js';
 import errorHandler from './middleware/errorHandler.js';
+import profileRoutes from './routes/profile.route.js';
 
 // Load environment variables
 dotenv.config();
@@ -38,7 +39,7 @@ app.get('/api/health', (req, res) => {
 console.log("first")
 app.use('/api/auth', authRoutes);
 console.log("second1")
-// app.use('/api/profile', profileRoutes);
+app.use('/api/profile', profileRoutes);
 // app.use('/api/opportunities', opportunityRoutes);
 // app.use('/api', matchRoutes);
 
