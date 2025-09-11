@@ -7,6 +7,9 @@ import authRoutes from './routes/auth.route.js';
 import errorHandler from './middleware/errorHandler.js';
 import profileRoutes from './routes/profile.route.js';
 import opportunityRoutes from './routes/opportunity.route.js';
+import matchRoutes from './routes/match.route.js';
+
+
 // Load environment variables
 dotenv.config();
 
@@ -41,7 +44,7 @@ app.use('/api/auth', authRoutes);
 console.log("second1")
 app.use('/api/profile', profileRoutes);
 app.use('/api/opportunities', opportunityRoutes);
-// app.use('/api', matchRoutes);
+app.use('/api/match', matchRoutes);
 
 // Catch-all handler for undefined routes
 app.use('/', (req, res) => {
