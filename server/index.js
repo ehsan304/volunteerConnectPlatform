@@ -2,6 +2,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser'; 
 import connectDB from './config/database.js';
 import authRoutes from './routes/auth.route.js';
 import errorHandler from './middleware/errorHandler.js';
@@ -18,8 +19,18 @@ const app = express();
 
 connectDB();
 
+// ✅ Allow cookies to be sent from frontend (adjust origin if needed)
+app.use(cors({
+    origin: 'http://localhost:5173', // your React app
+    credentials: true
+}));
+
+
+app.use(cookieParser());  // ✅ parse cookies
+
+
 // Middlewares
-app.use(cors());
+// app.use(cors());
 // Add this right after your CORS middleware in server/index.js
 app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);

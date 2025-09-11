@@ -6,7 +6,8 @@ import { UnauthorizedError } from '../utils/AppError.js';
 // Protect routes - verify JWT
 const protect = async (req, res, next) => {
     try {
-        let token;
+        let token = req.cookies?.token;  // ✅ read from cookie
+
 
         // Check if token exists in headers
         if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {

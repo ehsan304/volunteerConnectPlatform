@@ -41,6 +41,15 @@ export const signup = async (req, res, next) => {
         // Generate token
         const token = generateToken(user._id);
 
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production", // true if deployed with https
+            sameSite: "strict",
+            maxAge: 24 * 60 * 60 * 1000 // 1 day
+        });
+
+
         // Remove password from response
         const userResponse = { ...user.toObject() };
         delete userResponse.password;
@@ -76,6 +85,16 @@ export const login = async (req, res, next) => {
         // Generate token
         const token = generateToken(user._id);
 
+
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 24 * 60 * 60 * 1000
+        });
+
+
         // Remove password from response
         const userResponse = { ...user.toObject() };
         delete userResponse.password;
@@ -92,3 +111,30 @@ export const login = async (req, res, next) => {
         next(new InternalServerError('Error during login'));
     }
 };
+
+
+// ✅ Verify Token
+export const verifyToken = async (req, res, next) => {
+    try {
+        // `protect` middleware already added `req.user`
+        res.json({
+            success: true,
+            user: {
+                _id: req.user._id,
+                name: req.user.name,
+                email: req.user.email,
+            },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+export const logout = (req, res) => {
+    res.clearCookie('token'); // remove token cookie
+    res.status(200).json({
+        success: true,
+        message: 'Logged out successfully',
+    });
+}
