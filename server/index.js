@@ -22,6 +22,7 @@ connectDB();
 app.use(cors({
     origin: [
         'https://volunteer-connect-platform.vercel.app/',
+        'https://volunteer-connect-platform-1.vercel.app/',
         'http://localhost:3000' // for local development
     ],
     credentials: true
