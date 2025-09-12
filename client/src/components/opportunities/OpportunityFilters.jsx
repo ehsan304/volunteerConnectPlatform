@@ -1,4 +1,3 @@
-// src/components/opportunities/OpportunityFilters.jsx
 import { useState } from 'react';
 import { Search, Filter, X } from 'lucide-react';
 import { useOpportunities } from '../../contexts/OpportunityContext';

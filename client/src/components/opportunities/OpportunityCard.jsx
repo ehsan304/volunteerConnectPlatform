@@ -1,4 +1,3 @@
-// src/components/opportunities/OpportunityCard.jsx
 import { MapPin, Calendar, Users, Clock, Heart } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 

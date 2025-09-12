@@ -9,6 +9,7 @@ import errorHandler from './middleware/errorHandler.js';
 import profileRoutes from './routes/profile.route.js';
 import opportunityRoutes from './routes/opportunity.route.js';
 import matchRoutes from './routes/match.route.js';
+import applicationRoutes from './routes/application.route.js';
 
 
 // Load environment variables
@@ -56,6 +57,8 @@ console.log("second1")
 app.use('/api/profile', profileRoutes);
 app.use('/api/opportunities', opportunityRoutes);
 app.use('/api/match', matchRoutes);
+app.use('/api/applications', applicationRoutes);
+
 
 // Catch-all handler for undefined routes
 app.use('/', (req, res) => {

@@ -4,37 +4,31 @@ import { MapPin, Calendar, Users, Clock, ArrowLeft, Heart, Share, AlertCircle } 
 import { opportunitiesAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import ApplicationForm from '../components/opportunities/ApplicationForm';
 
 const OpportunityDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { user, isAuthenticated } = useAuth();
     const userRole = user?.role || null;
-    // console.log('user:', user);          // will show {_id, email, role}
-    // console.log('userRole:', userRole);
     const [opportunity, setOpportunity] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [applying, setApplying] = useState(false);
     const [applicationStatus, setApplicationStatus] = useState(null);
-    // const [userRole, setUserRole] = useState(null);
+    
+    const [showApplicationForm, setShowApplicationForm] = useState(false);
+    const [applicationSuccess, setApplicationSuccess] = useState(false);
 
     useEffect(() => {
         fetchOpportunity();
     }, [id]);
 
-    // useEffect(() => {
-    //     // Update userRole when user changes
-    //     if (user) {
-    //         userRole(user.role);
-    //     } else {
-    //         userRole(null);
-    //     }
-    // }, [user]);
-    // console.log('user:', user);
-    // console.log('userRole:', userRole);
-
-
+        const handleApplicationSuccess = () => {
+        setApplicationSuccess(true);
+        // Refetch opportunity to update application status
+        fetchOpportunity();
+    };
     const fetchOpportunity = async () => {
         try {
             setLoading(true);
@@ -75,8 +69,7 @@ const OpportunityDetail = () => {
 
         try {
             setApplying(true);
-            // This would be replaced with actual application API call
-            // For now, we'll simulate success
+            
             setTimeout(() => {
                 setApplicationStatus('applied');
                 setApplying(false);
@@ -113,7 +106,7 @@ const OpportunityDetail = () => {
         const registered = opportunity?.volunteersRegistered?.length || 0;
         return Math.max(0, (opportunity?.volunteersNeeded || 0) - registered);
     };
-
+    
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -261,22 +254,25 @@ const OpportunityDetail = () => {
                                 </div>
                             ) : (
                                 <div className="flex flex-col sm:flex-row gap-4">
+                                    {/* // Update the Apply button to show the form */}
                                     <button
-                                        onClick={handleApply}
-                                        disabled={applying || calculateSpotsLeft() === 0 || (isAuthenticated && userRole !== 'volunteer')}
+                                        onClick={() => setShowApplicationForm(true)}
+                                        disabled={applying || calculateSpotsLeft() === 0 || applicationStatus === 'applied'}
                                         className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                        {applying ? (
-                                            <>
-                                                <LoadingSpinner size="small" />
-                                                <span className="ml-2">Applying...</span>
-                                            </>
-                                        ) : isAuthenticated && userRole !== 'volunteer' ? (
-                                            'Only volunteers can apply'
-                                        ) : (
-                                            `Apply Now (${calculateSpotsLeft()} spots left)`
-                                        )}
+                                        {applicationStatus === 'applied' ? 'Applied' : `Apply Now (${calculateSpotsLeft()} spots left)`}
                                     </button>
+                                    <div className="border-t pt-6">
+                                        
+
+                                        {showApplicationForm && (
+                                            <ApplicationForm
+                                                opportunity={opportunity}
+                                                onClose={() => setShowApplicationForm(false)}
+                                                onSuccess={handleApplicationSuccess}
+                                            />
+                                        )}
+                                    </div>
 
                                     {calculateSpotsLeft() === 0 && (
                                         <div className="bg-yellow-50 text-yellow-700 px-4 py-3 rounded-lg">

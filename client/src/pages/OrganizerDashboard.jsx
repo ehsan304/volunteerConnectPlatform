@@ -32,9 +32,7 @@ const OrganizerDashboard = () => {
     };
 
     const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this opportunity?')) {
-            return;
-        }
+        if (!window.confirm('Are you sure you want to delete this opportunity?')) return;
 
         try {
             setDeletingId(id);
@@ -197,11 +195,11 @@ const OrganizerDashboard = () => {
                                                 <td className="py-4 px-4">
                                                     <div className="flex gap-2">
                                                         <Link
-                                                            to={`/opportunities/${opportunity._id}`}
+                                                            to={`/opportunities/${opportunity._id}/applications`}
                                                             className="p-1 text-gray-600 hover:text-primary-600"
-                                                            title="View"
+                                                            title="View Applications"
                                                         >
-                                                            <Eye className="h-4 w-4" />
+                                                            <Users className="h-4 w-4" />
                                                         </Link>
                                                         <Link
                                                             to={`/opportunities/${opportunity._id}/edit`}

@@ -22,7 +22,7 @@ const Home = () => {
                             {isAuthenticated ? (
                                 <div>
                                     <h2 className="text-2xl md:text-3xl font-semibold mb-4">
-                                        Welcome back, {user?.email}!
+                                        Welcome back, {user?.email?.split('@')[0]}!
                                     </h2>
                                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                         {user?.role === 'volunteer' ? (

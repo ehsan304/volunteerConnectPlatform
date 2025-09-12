@@ -1,4 +1,3 @@
-// server/contexts/ProfileContext.jsx
 import { createContext, useContext, useReducer, useCallback } from 'react';
 import { profileAPI } from '../services/api';
 import { useAuth } from './AuthContext';

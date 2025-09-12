@@ -175,6 +175,31 @@ const Navbar = () => {
                                     <LogOut className="h-4 w-4 mr-2" />
                                     Logout
                                 </button>
+                                // In src/components/common/Navbar.jsx
+                                // Add this to the volunteer section
+                                {user?.role === 'volunteer' && (
+                                    <>
+                                        <Link
+                                            to="/matches"
+                                            className="text-gray-600 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300"
+                                        >
+                                            My Matches
+                                        </Link>
+                                        <Link
+                                            to="/my-applications"
+                                            className="text-gray-600 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300"
+                                        >
+                                            My Applications
+                                        </Link>
+                                        <Link
+                                            to="/profile"
+                                            className="flex items-center text-gray-600 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300"
+                                        >
+                                            <User className="h-4 w-4 mr-1" />
+                                            Profile
+                                        </Link>
+                                    </>
+                                )}
                             </>
                         ) : (
                             <>
