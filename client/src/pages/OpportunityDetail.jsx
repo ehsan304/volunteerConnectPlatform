@@ -11,24 +11,20 @@ const OpportunityDetail = () => {
     const navigate = useNavigate();
     const { user, isAuthenticated } = useAuth();
     const userRole = user?.role || null;
+
     const [opportunity, setOpportunity] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [applying, setApplying] = useState(false);
     const [applicationStatus, setApplicationStatus] = useState(null);
-    
     const [showApplicationForm, setShowApplicationForm] = useState(false);
     const [applicationSuccess, setApplicationSuccess] = useState(false);
 
+    // Fetch opportunity details
     useEffect(() => {
         fetchOpportunity();
     }, [id]);
 
-        const handleApplicationSuccess = () => {
-        setApplicationSuccess(true);
-        // Refetch opportunity to update application status
-        fetchOpportunity();
-    };
     const fetchOpportunity = async () => {
         try {
             setLoading(true);
@@ -61,7 +57,6 @@ const OpportunityDetail = () => {
             return;
         }
 
-        // Check if user role is available and is volunteer
         if (userRole !== 'volunteer') {
             setError('Only volunteers can apply to opportunities');
             return;
@@ -69,11 +64,10 @@ const OpportunityDetail = () => {
 
         try {
             setApplying(true);
-            
+
             setTimeout(() => {
                 setApplicationStatus('applied');
                 setApplying(false);
-                // Update local state to reflect the application
                 setOpportunity(prev => ({
                     ...prev,
                     volunteersRegistered: [...(prev.volunteersRegistered || []), user._id]
@@ -85,13 +79,24 @@ const OpportunityDetail = () => {
             setApplying(false);
         }
     };
-    if (loading) {
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <LoadingSpinner size="large" />
-            </div>
-        );
-    }
+
+    const handleApplicationSuccess = () => {
+        setApplicationSuccess(true);
+        fetchOpportunity();
+    };
+
+    const handleDelete = async () => {
+        if (!window.confirm('Are you sure you want to delete this opportunity?')) return;
+
+        try {
+            await opportunitiesAPI.delete(opportunity._id);
+            navigate('/opportunities');
+        } catch (error) {
+            console.error('Failed to delete opportunity:', error);
+            alert('Failed to delete opportunity. Please try again.');
+        }
+    };
+
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(dateString).toLocaleDateString(undefined, options);
@@ -106,7 +111,7 @@ const OpportunityDetail = () => {
         const registered = opportunity?.volunteersRegistered?.length || 0;
         return Math.max(0, (opportunity?.volunteersNeeded || 0) - registered);
     };
-    
+
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -124,18 +129,8 @@ const OpportunityDetail = () => {
                         <h2 className="text-2xl font-bold text-red-600 mb-4">Error</h2>
                         <p className="text-gray-600 mb-4">{error || 'Opportunity not found'}</p>
                         <div className="flex gap-4 justify-center">
-                            <button
-                                onClick={fetchOpportunity}
-                                className="btn-primary"
-                            >
-                                Try Again
-                            </button>
-                            <Link
-                                to="/opportunities"
-                                className="btn-secondary"
-                            >
-                                Browse Opportunities
-                            </Link>
+                            <button onClick={fetchOpportunity} className="btn-primary">Try Again</button>
+                            <Link to="/opportunities" className="btn-secondary">Browse Opportunities</Link>
                         </div>
                     </div>
                 </div>
@@ -227,10 +222,7 @@ const OpportunityDetail = () => {
                             <h2 className="text-xl font-semibold text-gray-800 mb-4">Skills Required</h2>
                             <div className="flex flex-wrap gap-2">
                                 {opportunity.requiredSkills.map((skill, index) => (
-                                    <span
-                                        key={index}
-                                        className="px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm"
-                                    >
+                                    <span key={index} className="px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm">
                                         {skill}
                                     </span>
                                 ))}
@@ -245,26 +237,25 @@ const OpportunityDetail = () => {
                                         <p className="font-medium">You've successfully applied to this opportunity!</p>
                                         <p>The organizer will contact you with more details.</p>
                                     </div>
-                                    <Link
-                                        to="/opportunities"
-                                        className="btn-primary"
-                                    >
-                                        Browse More Opportunities
-                                    </Link>
+                                    <Link to="/opportunities" className="btn-primary">Browse More Opportunities</Link>
                                 </div>
                             ) : (
                                 <div className="flex flex-col sm:flex-row gap-4">
-                                    {/* // Update the Apply button to show the form */}
-                                    <button
-                                        onClick={() => setShowApplicationForm(true)}
-                                        disabled={applying || calculateSpotsLeft() === 0 || applicationStatus === 'applied'}
-                                        className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        {applicationStatus === 'applied' ? 'Applied' : `Apply Now (${calculateSpotsLeft()} spots left)`}
-                                    </button>
-                                    <div className="border-t pt-6">
-                                        
+                                    {userRole === 'volunteer' ? (
+                                        <button
+                                            onClick={() => setShowApplicationForm(true)}
+                                            disabled={applying || calculateSpotsLeft() === 0 || applicationStatus === 'applied'}
+                                            className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                                        >
+                                            {applicationStatus === 'applied' ? 'Applied' : `Apply Now (${calculateSpotsLeft()} spots left)`}
+                                        </button>
+                                    ) : (
+                                        <div className="text-gray-500 text-center py-2">
+                                            Only volunteers can apply to this opportunity.
+                                        </div>
+                                    )}
 
+                                    <div className="border-t pt-6">
                                         {showApplicationForm && (
                                             <ApplicationForm
                                                 opportunity={opportunity}
@@ -283,15 +274,18 @@ const OpportunityDetail = () => {
                             )}
                         </div>
 
-                        {/* Additional Info for Organizers */}
+                        {/* Organizer Tools */}
                         {isAuthenticated && userRole === 'organizer' && user._id === opportunity.organizer?._id && (
                             <div className="mt-6 border-t pt-6">
                                 <h2 className="text-xl font-semibold text-gray-800 mb-4">Organizer Tools</h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <button className="btn-secondary">
+                                    <button className="btn-secondary"
+                                        onClick={() => navigate(`/opportunities/${opportunity._id}/edit`)}>
                                         Edit Opportunity
                                     </button>
-                                    <button className="bg-red-100 text-red-700 px-4 py-2 rounded-lg hover:bg-red-200 transition-colors">
+                                    <button
+                                        onClick={handleDelete}
+                                        className="bg-red-100 text-red-700 px-4 py-2 rounded-lg hover:bg-red-200 transition-colors">
                                         Delete Opportunity
                                     </button>
                                 </div>
@@ -319,7 +313,6 @@ const OpportunityDetail = () => {
                 <div className="mt-8">
                     <h2 className="text-2xl font-bold text-gray-800 mb-6">Similar Opportunities</h2>
                     <div className="grid md:grid-cols-2 gap-6">
-                        {/* This would be populated with actual related opportunities */}
                         <div className="bg-white p-4 rounded-lg shadow-sm border">
                             <h3 className="font-semibold text-gray-800 mb-2">Community Garden Volunteer</h3>
                             <p className="text-gray-600 text-sm mb-3">Help maintain our community garden every Saturday morning</p>
