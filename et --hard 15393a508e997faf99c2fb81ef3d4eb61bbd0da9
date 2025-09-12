@@ -1,0 +1,78 @@
+[33mcommit 86bff9da27331ed9e3c14e576056002e702f3e48[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: ehsan304 <muhammadehsan304@gmail.com>
+Date:   Fri Sep 12 05:18:35 2025 +0500
+
+    create volunteer profile update component
+
+[33mcommit 15393a508e997faf99c2fb81ef3d4eb61bbd0da9[m
+Author: ehsan304 <muhammadehsan304@gmail.com>
+Date:   Fri Sep 12 02:58:48 2025 +0500
+
+    debugging and bug fixes about JWT token and logout functionality
+
+[33mcommit cf9f1155fd6b85a4c384f756c5cc1c1800900e1e[m
+Author: ehsan304 <muhammadehsan304@gmail.com>
+Date:   Fri Sep 12 00:25:09 2025 +0500
+
+    start ui and create the home page
+
+[33mcommit cba63b2f8a849505aabdfbc64eb5ed5c61b88c8f[m
+Author: ehsan304 <muhammadehsan304@gmail.com>
+Date:   Thu Sep 11 07:52:39 2025 +0500
+
+    Implement matching algorithm with skill matching and location proximity
+
+[33mcommit c4205a6654ce0c8cc962ce3e7d2cb47c73ad7ab7[m
+Author: ehsan304 <muhammadehsan304@gmail.com>
+Date:   Thu Sep 11 04:55:54 2025 +0500
+
+    Add opportunity management for organizers with CRUD operations
+
+[33mcommit 81f248da4a69abde92df3d65d94ac0b2a2d8a226[m
+Author: ehsan304 <muhammadehsan304@gmail.com>
+Date:   Thu Sep 11 04:22:18 2025 +0500
+
+    Add profile management for volunteers with validation
+
+[33mcommit e4a5e907df337fa9a26208a0f13674c2b9209b7c[m
+Author: ehsan304 <muhammadehsan304@gmail.com>
+Date:   Thu Sep 11 04:00:18 2025 +0500
+
+    test: Complete authentication endpoint testing
+
+[33mcommit 22c961a826cecabf8ce0a5b723e1c2d6ed385b4f[m
+Author: ehsan304 <muhammadehsan304@gmail.com>
+Date:   Thu Sep 11 00:26:43 2025 +0500
+
+    Remove .env file from repo
+
+[33mcommit 9dab235109f20340ba11189f0131cfa962cdf5ef[m
+Author: ehsan304 <muhammadehsan304@gmail.com>
+Date:   Wed Sep 10 23:52:24 2025 +0500
+
+    create the server and test it (it's running)
+
+[33mcommit c7b178cd067f70f9d114dbd67c6425c950429d5d[m
+Merge: ec64ad6 d6ed2f5
+Author: ehsan304 <muhammadehsan304@gmail.com>
+Date:   Wed Sep 10 22:51:40 2025 +0500
+
+    Merge branch 'main' of https://github.com/ehsan304/volunteerConnectPlateform
+
+[33mcommit ec64ad68feb4066f285ec9e5098b942d969b9e43[m
+Author: ehsan304 <muhammadehsan304@gmail.com>
+Date:   Wed Sep 10 22:50:28 2025 +0500
+
+    install dependencies
+
+[33mcommit d6ed2f5ba703868ec7e89f2b58c11d40c6f8bbe7[m
+Author: ehsan304 <160346206+ehsan304@users.noreply.github.com>
+Date:   Wed Sep 10 22:44:18 2025 +0500
+
+    Update README.md
+
+[33mcommit 97ccb72257cc0015511dac0429b2392abc37007f[m
+Author: ehsan304 <muhammadehsan304@gmail.com>
+Date:   Wed Sep 10 22:36:31 2025 +0500
+
+    first commit
