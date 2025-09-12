@@ -21,7 +21,7 @@ connectDB();
 
 app.use(cors({
     origin: [
-        'https://volunteer-connect-platform.vercel.app/',
+        'https://volunteer-connect-platform.vercel.app',
         'http://localhost:3000' // for local development
     ],
     credentials: true
@@ -51,6 +51,11 @@ app.use('/api/opportunities', opportunityRoutes);
 app.use('/api/match', matchRoutes);
 app.use('/api/applications', applicationRoutes);
 
+
+
+app.get('/api/test', (req, res) => {
+    res.json({ message: 'Test successful', timestamp: new Date().toISOString() });
+});
 
 // Catch-all handler for undefined routes
 app.use('/', (req, res) => {
