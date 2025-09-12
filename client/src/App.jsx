@@ -9,6 +9,7 @@ import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 import './index.css';
 import OrganizerDashboard from './pages/OrganizerDashboard';
+import OpportunityDetail from './pages/OpportunityDetail'; 
 import Opportunities from './pages/Opportunities'; // Add this import
 
 function App() {
@@ -40,6 +41,7 @@ function App() {
                   }
                 />
                 <Route path="/opportunities" element={<Opportunities />} /> {/* Add this route */}
+                <Route path="/opportunities/:id" element={<OpportunityDetail />} /> {/* Add this route */}
                 {/* Add more routes as we create more pages */}
               </Routes>
             </main>

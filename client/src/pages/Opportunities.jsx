@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { MapPin, Calendar, Users, Clock, Filter, Search, X } from 'lucide-react';
 import { opportunitiesAPI } from '../services/api';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import { Link } from 'react-router-dom';
 
 const Opportunities = () => {
     const [opportunities, setOpportunities] = useState([]);
@@ -227,8 +228,8 @@ const Opportunities = () => {
                                                 key={skill}
                                                 onClick={() => handleSkillFilter(skill)}
                                                 className={`px-3 py-1 rounded-full text-sm transition-colors ${filters.skills.includes(skill)
-                                                        ? 'bg-primary-600 text-white'
-                                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                    ? 'bg-primary-600 text-white'
+                                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                                     }`}
                                             >
                                                 {skill}
@@ -330,9 +331,12 @@ const Opportunities = () => {
                                         </div>
                                     </div>
 
-                                    <button className="w-full btn-primary">
+                                    <Link
+                                        to={`/opportunities/${opportunity._id}`}
+                                        className="w-full btn-primary block text-center"
+                                    >
                                         View Details
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
                         ))}

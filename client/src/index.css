@@ -62,3 +62,35 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Add these styles to your existing CSS */
+.opportunity-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .opportunity-stats {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.organizer-tools {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.related-opportunities {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .related-opportunities {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
