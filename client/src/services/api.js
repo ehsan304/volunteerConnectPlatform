@@ -21,3 +21,13 @@ export const profileAPI = {
     get: () => api.get('/profile'),
     update: (profileData) => api.put('/profile', profileData),
 };
+
+
+export const opportunitiesAPI = {
+    getAll: () => api.get('/opportunities'),                  // GET /api/opportunities
+    getOne: (id) => api.get(`/opportunities/${id}`),         // GET /api/opportunities/:id
+    getMy: () => api.get('/opportunities/my/opportunities'), // GET /api/opportunities/my/opportunities
+    create: (data) => api.post('/opportunities', data),      // POST /api/opportunities
+    update: (id, data) => api.put(`/opportunities/${id}`, data), // PUT /api/opportunities/:id
+    delete: (id) => api.delete(`/opportunities/${id}`),      // DELETE /api/opportunities/:id
+};
