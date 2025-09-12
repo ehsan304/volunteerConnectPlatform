@@ -46,12 +46,33 @@ export const AuthProvider = ({ children }) => {
         };
         verify();
     }, []);
-
+    useEffect(() => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            dispatch({ type: "LOGIN_SUCCESS", payload: JSON.parse(storedUser) });
+            dispatch({ type: "SET_LOADING", payload: false });
+        }
+    }, []);
     const login = async (email, password) => {
         dispatch({ type: "LOGIN_START" });
         try {
             const res = await authAPI.login({ email, password });
-            dispatch({ type: "LOGIN_SUCCESS", payload: res.data.user });
+
+
+
+            const userData = res.data.data.user; // user object with role
+            const token = res.data.data.token;
+
+            // Save token and user in localStorage
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(userData))
+
+
+
+            // const userData = res.data.data.user; // ✅ this contains _id, email, role
+            dispatch({ type: "LOGIN_SUCCESS", payload: userData }); // ✅ use this
+
+            // dispatch({ type: "LOGIN_SUCCESS", payload: res.data.user });
             return { success: true };
         } catch (err) {
             const errorMessage = err.response?.data?.message || "Login failed";
@@ -76,7 +97,7 @@ export const AuthProvider = ({ children }) => {
     const logout = async () => {
         try {
             await authAPI.logout();
-        } catch {}
+        } catch { }
         dispatch({ type: "LOGOUT" });
     };
 
@@ -88,6 +109,7 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider
             value={{
                 user: state.user,
+                userRole: state.user?.role,
                 isAuthenticated: state.isAuthenticated,
                 loading: state.loading,
                 error: state.error,
@@ -101,5 +123,6 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
+
 
 export const useAuth = () => useContext(AuthContext);

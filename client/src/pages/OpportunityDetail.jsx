@@ -9,15 +9,31 @@ const OpportunityDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { user, isAuthenticated } = useAuth();
+    const userRole = user?.role || null;
+    // console.log('user:', user);          // will show {_id, email, role}
+    // console.log('userRole:', userRole);
     const [opportunity, setOpportunity] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [applying, setApplying] = useState(false);
     const [applicationStatus, setApplicationStatus] = useState(null);
+    // const [userRole, setUserRole] = useState(null);
 
     useEffect(() => {
         fetchOpportunity();
     }, [id]);
+
+    // useEffect(() => {
+    //     // Update userRole when user changes
+    //     if (user) {
+    //         userRole(user.role);
+    //     } else {
+    //         userRole(null);
+    //     }
+    // }, [user]);
+    // console.log('user:', user);
+    // console.log('userRole:', userRole);
+
 
     const fetchOpportunity = async () => {
         try {
@@ -27,7 +43,7 @@ const OpportunityDetail = () => {
             setError(null);
 
             // Check if user has already applied (if authenticated)
-            if (isAuthenticated && user?.role === 'volunteer') {
+            if (isAuthenticated && user && user.role === 'volunteer') {
                 checkApplicationStatus(response.data);
             }
         } catch (error) {
@@ -51,7 +67,8 @@ const OpportunityDetail = () => {
             return;
         }
 
-        if (user.role !== 'volunteer') {
+        // Check if user role is available and is volunteer
+        if (userRole !== 'volunteer') {
             setError('Only volunteers can apply to opportunities');
             return;
         }
@@ -66,7 +83,7 @@ const OpportunityDetail = () => {
                 // Update local state to reflect the application
                 setOpportunity(prev => ({
                     ...prev,
-                    volunteersRegistered: [...prev.volunteersRegistered, user._id]
+                    volunteersRegistered: [...(prev.volunteersRegistered || []), user._id]
                 }));
             }, 1000);
         } catch (error) {
@@ -75,20 +92,26 @@ const OpportunityDetail = () => {
             setApplying(false);
         }
     };
-
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <LoadingSpinner size="large" />
+            </div>
+        );
+    }
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
 
     const getTimeRange = (time) => {
-        if (!time?.start && !time?.end) return 'Flexible timing';
+        if (!time.start && !time.end) return 'Flexible timing';
         return `${time.start || ''} - ${time.end || ''}`;
     };
 
     const calculateSpotsLeft = () => {
-        const registered = opportunity.volunteersRegistered?.length || 0;
-        return Math.max(0, opportunity.volunteersNeeded - registered);
+        const registered = opportunity?.volunteersRegistered?.length || 0;
+        return Math.max(0, (opportunity?.volunteersNeeded || 0) - registered);
     };
 
     if (loading) {
@@ -169,7 +192,7 @@ const OpportunityDetail = () => {
                             <div className="bg-gray-50 p-4 rounded-lg text-center">
                                 <MapPin className="h-6 w-6 text-primary-600 mx-auto mb-2" />
                                 <p className="text-sm text-gray-600">Location</p>
-                                <p className="font-semibold">{opportunity.location?.city  || 'N/A'}</p>
+                                <p className="font-semibold">{opportunity.location.city}</p>
                             </div>
 
                             <div className="bg-gray-50 p-4 rounded-lg text-center">
@@ -201,8 +224,8 @@ const OpportunityDetail = () => {
                         <div className="mb-8">
                             <h2 className="text-xl font-semibold text-gray-800 mb-4">Location Details</h2>
                             <div className="bg-gray-50 p-4 rounded-lg">
-                                <p className="text-gray-600">{opportunity.location?.address}</p>
-                                <p className="text-gray-600">{opportunity.location?.city}, {opportunity.location?.zipCode}</p>
+                                <p className="text-gray-600">{opportunity.location.address}</p>
+                                <p className="text-gray-600">{opportunity.location.city}, {opportunity.location.zipCode}</p>
                             </div>
                         </div>
 
@@ -210,7 +233,7 @@ const OpportunityDetail = () => {
                         <div className="mb-8">
                             <h2 className="text-xl font-semibold text-gray-800 mb-4">Skills Required</h2>
                             <div className="flex flex-wrap gap-2">
-                                {opportunity.requiredSkills?.map((skill, index) => (
+                                {opportunity.requiredSkills.map((skill, index) => (
                                     <span
                                         key={index}
                                         className="px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm"
@@ -240,7 +263,7 @@ const OpportunityDetail = () => {
                                 <div className="flex flex-col sm:flex-row gap-4">
                                     <button
                                         onClick={handleApply}
-                                        disabled={applying || calculateSpotsLeft() === 0}
+                                        disabled={applying || calculateSpotsLeft() === 0 || (isAuthenticated && userRole !== 'volunteer')}
                                         className="flex-1 btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
                                         {applying ? (
@@ -248,6 +271,8 @@ const OpportunityDetail = () => {
                                                 <LoadingSpinner size="small" />
                                                 <span className="ml-2">Applying...</span>
                                             </>
+                                        ) : isAuthenticated && userRole !== 'volunteer' ? (
+                                            'Only volunteers can apply'
                                         ) : (
                                             `Apply Now (${calculateSpotsLeft()} spots left)`
                                         )}
@@ -263,7 +288,7 @@ const OpportunityDetail = () => {
                         </div>
 
                         {/* Additional Info for Organizers */}
-                        {isAuthenticated && user.role === 'organizer' && user._id === opportunity.organizer?._id && (
+                        {isAuthenticated && userRole === 'organizer' && user._id === opportunity.organizer?._id && (
                             <div className="mt-6 border-t pt-6">
                                 <h2 className="text-xl font-semibold text-gray-800 mb-4">Organizer Tools</h2>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

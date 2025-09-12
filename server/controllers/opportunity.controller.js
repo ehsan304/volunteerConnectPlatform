@@ -34,7 +34,6 @@ export const getOpportunity = async (req, res, next) => {
             data: opportunity
             
         });
-        console.log(opportunity)
     } catch (error) {
         next(new InternalServerError('Error fetching opportunity'));
     }

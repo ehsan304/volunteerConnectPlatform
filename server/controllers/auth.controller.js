@@ -51,8 +51,13 @@ export const signup = async (req, res, next) => {
 
 
         // Remove password from response
-        const userResponse = { ...user.toObject() };
-        delete userResponse.password;
+        // const userResponse = { ...user.toObject() };
+        const userResponse = {
+            _id: user._id,
+            email: user.email,
+            role: user.role // ✅ include role here
+        };
+        // delete userResponse.password;
 
         res.status(201).json({
             success: true,
@@ -96,9 +101,13 @@ export const login = async (req, res, next) => {
 
 
         // Remove password from response
-        const userResponse = { ...user.toObject() };
-        delete userResponse.password;
-
+        const userResponse = {
+            _id: user._id,
+            email: user.email,
+            role: user.role // ✅ include role here
+        };
+        // delete userResponse.password;
+        console.log("i am", userResponse)
         res.status(200).json({
             success: true,
             message: 'Login successful',
