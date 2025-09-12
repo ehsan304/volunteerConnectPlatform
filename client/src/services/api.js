@@ -11,7 +11,13 @@ export const authAPI = {
     verifyToken: () => api.get("/auth/verify"),
     logout: () => api.post("/auth/logout"),
 };
-export const profileAPI = axios.create({
-    baseURL: "http://localhost:5001/api/profile",
-    withCredentials: true,
-});
+// export const profileAPI = {
+//     getProfile: () => api.get("/profile"),          // GET /api/profile
+//     updateProfile: (data) => api.put("/profile", data),  // PUT /api/profile
+// };
+
+// Ensure this part exists in your api.js file
+export const profileAPI = {
+    get: () => api.get('/profile'),
+    update: (profileData) => api.put('/profile', profileData),
+};

@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 import './index.css';
+import OrganizerDashboard from './pages/OrganizerDashboard';
 
 function App() {
   return (
@@ -24,8 +25,16 @@ function App() {
                 <Route
                   path="/profile"
                   element={
-                    <ProtectedRoute requiredRole="volunteer">
+                    <ProtectedRoute>
                       <Profile />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/my-opportunities"
+                  element={
+                    <ProtectedRoute requiredRole="organizer">
+                      <OrganizerDashboard />
                     </ProtectedRoute>
                   }
                 />

@@ -45,12 +45,23 @@ const Navbar = () => {
                                     </Link>
                                 )}
                                 {user?.role === 'organizer' && (
-                                    <Link
-                                        to="/my-opportunities"
-                                        className="text-gray-600 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300"
-                                    >
-                                        My Opportunities
-                                    </Link>
+                                    <>
+                                        <Link
+                                            to="/my-opportunities"
+                                            className="text-gray-600 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300"
+                                        >
+                                            <Briefcase className="h-4 w-4 mr-1" />
+                                            {/* My Opportunities */}
+                                            Dashboard
+                                        </Link>
+                                        <Link
+                                            to="/opportunities/create"
+                                            className="flex items-center text-gray-600 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300"
+                                        >
+                                            <Plus className="h-4 w-4 mr-1" />
+                                            New Opportunity
+                                        </Link>
+                                    </>
                                 )}
                                 <Link
                                     to="/profile"

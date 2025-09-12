@@ -1,6 +1,7 @@
-import { createContext, useContext, useReducer } from 'react';
-import { profileAPI } from '../services/api.js';
-import { useAuth } from './AuthContext.jsx';
+// server/contexts/ProfileContext.jsx
+import { createContext, useContext, useReducer, useCallback } from 'react';
+import { profileAPI } from '../services/api';
+import { useAuth } from './AuthContext';
 
 const ProfileContext = createContext();
 
@@ -68,8 +69,11 @@ export const ProfileProvider = ({ children }) => {
     const [state, dispatch] = useReducer(profileReducer, initialState);
     const { user } = useAuth();
 
-    const fetchProfile = async () => {
-        if (user?.role !== 'volunteer') return;
+    const fetchProfile = useCallback(async () => {
+        if (user?.role !== 'volunteer') {
+            dispatch({ type: 'FETCH_PROFILE_FAILURE', payload: 'User is not a volunteer' });
+            return;
+        }
 
         dispatch({ type: 'FETCH_PROFILE_START' });
         try {
@@ -85,9 +89,9 @@ export const ProfileProvider = ({ children }) => {
                 payload: errorMessage,
             });
         }
-    };
+    }, [user?.role]);
 
-    const updateProfile = async (profileData) => {
+    const updateProfile = useCallback(async (profileData) => {
         dispatch({ type: 'UPDATE_PROFILE_START' });
         try {
             const response = await profileAPI.update(profileData);
@@ -104,11 +108,11 @@ export const ProfileProvider = ({ children }) => {
             });
             return { success: false, error: errorMessage };
         }
-    };
+    }, []);
 
-    const clearErrors = () => {
+    const clearErrors = useCallback(() => {
         dispatch({ type: 'CLEAR_PROFILE_ERRORS' });
-    };
+    }, []);
 
     return (
         <ProfileContext.Provider

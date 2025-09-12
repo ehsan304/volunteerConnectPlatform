@@ -1,39 +1,75 @@
+// src/pages/Profile.jsx
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useProfile } from '../contexts/ProfileContext';
 import ProfileForm from '../components/profile/ProfileForm';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
 const Profile = () => {
-    const { user } = useAuth();
+    const { user, isAuthenticated } = useAuth();
     const { profile, loading, error, fetchProfile, clearErrors } = useProfile();
+    const navigate = useNavigate();
 
     useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login');
+            return;
+        }
+
+        if (user?.role === 'organizer') {
+            navigate('/my-opportunities', { replace: true });
+            return;
+        }
+
         if (user?.role === 'volunteer') {
             fetchProfile();
         }
-        return () => clearErrors();
-    }, [user, fetchProfile, clearErrors]);
 
-    if (user?.role !== 'volunteer') {
+        return () => {
+            clearErrors();
+        };
+    }, [user, isAuthenticated, navigate, fetchProfile, clearErrors]);
+
+    // Show loading while checking authentication or fetching profile
+    if (!isAuthenticated || (user?.role === 'volunteer' && loading && !profile)) {
         return (
             <div className="min-h-screen flex items-center justify-center">
-                <div className="max-w-md w-full p-6 bg-white rounded-lg shadow-md">
-                    <h2 className="text-2xl font-bold text-center text-gray-800 mb-4">
-                        Access Denied
-                    </h2>
-                    <p className="text-gray-600 text-center">
-                        Only volunteers can access profile management.
-                    </p>
-                </div>
+                <LoadingSpinner size="large" />
             </div>
         );
     }
 
-    if (loading) {
+    // Redirect organizers
+    if (user?.role === 'organizer') {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <LoadingSpinner size="large" />
+            </div>
+        );
+    }
+
+    // Show error state
+    if (error) {
+        return (
+            <div className="min-h-screen bg-gray-50 py-8">
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="bg-white rounded-xl shadow-md overflow-hidden p-6">
+                        <div className="text-center">
+                            <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Profile</h2>
+                            <p className="text-gray-600 mb-4">{error}</p>
+                            <button
+                                onClick={() => {
+                                    clearErrors();
+                                    fetchProfile();
+                                }}
+                                className="btn-primary"
+                            >
+                                Try Again
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }

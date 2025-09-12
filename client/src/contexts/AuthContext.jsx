@@ -12,7 +12,9 @@ const authReducer = (state, action) => {
         case "LOGIN_FAILURE":
             return { ...state, loading: false, user: null, isAuthenticated: false, error: action.payload };
         case "LOGOUT":
-            return { ...state, user: null, isAuthenticated: false, error: null };
+            return { ...state, loading: false, user: null, isAuthenticated: false, error: null };
+        case "SET_LOADING":
+            return { ...state, loading: action.payload };
         case "CLEAR_ERROR":
             return { ...state, error: null };
         default:
@@ -23,7 +25,7 @@ const authReducer = (state, action) => {
 const initialState = {
     user: null,
     isAuthenticated: false,
-    loading: false, // ✅ Start in loading until verify runs
+    loading: true, // ✅ Start as true until verifyToken finishes
     error: null,
 };
 
@@ -32,13 +34,17 @@ export const AuthProvider = ({ children }) => {
 
     // Check if user is already logged in (cookie-based)
     useEffect(() => {
-        authAPI.verifyToken()
-            .then((res) => {
+        const verify = async () => {
+            try {
+                const res = await authAPI.verifyToken();
                 dispatch({ type: "LOGIN_SUCCESS", payload: res.data.user });
-            })
-            .catch(() => {
+            } catch {
                 dispatch({ type: "LOGOUT" });
-            });
+            } finally {
+                dispatch({ type: "SET_LOADING", payload: false }); // ✅ important
+            }
+        };
+        verify();
     }, []);
 
     const login = async (email, password) => {
@@ -68,7 +74,9 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logout = async () => {
-        await authAPI.logout();
+        try {
+            await authAPI.logout();
+        } catch {}
         dispatch({ type: "LOGOUT" });
     };
 
@@ -94,6 +102,4 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
-export const useAuth = () => {
-    return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);

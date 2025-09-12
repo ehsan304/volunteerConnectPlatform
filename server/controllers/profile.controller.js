@@ -1,5 +1,6 @@
+// server/controllers/profileController.js
 import Profile from '../models/Profile.model.js';
-import { NotFoundError, InternalServerError } from '../utils/AppError.js';
+import { NotFoundError, InternalServerError, BadRequestError } from '../utils/AppError.js';
 
 // Get current user's profile
 export const getProfile = async (req, res, next) => {
@@ -58,10 +59,17 @@ export const updateProfile = async (req, res, next) => {
             data: profile
         });
     } catch (error) {
+        console.error('Error updating profile:', error);
         if (error.name === 'ValidationError') {
             const errors = Object.values(error.errors).map(el => el.message);
             return next(new BadRequestError(`Invalid input data: ${errors.join(', ')}`));
         }
         next(new InternalServerError('Error updating profile'));
     }
+};
+
+// Make sure you're exporting with these exact names
+export default {
+    getProfile,
+    updateProfile
 };

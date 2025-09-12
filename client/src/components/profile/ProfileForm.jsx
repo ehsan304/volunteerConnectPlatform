@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MapPin, Calendar, Briefcase, User, Save } from 'lucide-react';
+import { MapPin, Calendar, Briefcase, User, Save, AlertCircle } from 'lucide-react';
 import { useProfile } from '../../contexts/ProfileContext';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -63,6 +63,7 @@ const ProfileForm = ({ profile }) => {
     });
     const [newSkill, setNewSkill] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
+    const [validationErrors, setValidationErrors] = useState({});
 
     useEffect(() => {
         if (profile) {
@@ -88,6 +89,25 @@ const ProfileForm = ({ profile }) => {
         }
     }, [profile]);
 
+    const validateForm = () => {
+        const errors = {};
+
+        if (!formData.fullName.trim()) {
+            errors.fullName = 'Full name is required';
+        }
+
+        if (!formData.location.city.trim()) {
+            errors.city = 'City is required';
+        }
+
+        if (!formData.location.zipCode.trim()) {
+            errors.zipCode = 'ZIP code is required';
+        }
+
+        setValidationErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
 
@@ -110,6 +130,14 @@ const ProfileForm = ({ profile }) => {
         // Clear errors and success message when user starts typing
         if (updateError) clearErrors();
         if (successMessage) setSuccessMessage('');
+
+        // Clear validation errors for this field
+        if (validationErrors[name]) {
+            setValidationErrors(prev => ({
+                ...prev,
+                [name]: undefined
+            }));
+        }
     };
 
     const handleSkillAdd = () => {
@@ -147,19 +175,41 @@ const ProfileForm = ({ profile }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Validate form
+        if (!validateForm()) {
+            return;
+        }
+
+        console.log('Submitting form data:', formData);
+
         const result = await updateProfile(formData);
+        console.log('Update result:', result);
 
         if (result.success) {
             setSuccessMessage('Profile updated successfully!');
             setTimeout(() => setSuccessMessage(''), 3000);
+        } else {
+            console.error('Update failed:', result.error);
+        }
+    };
+
+    const handleKeyPress = (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSkillAdd();
         }
     };
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6">
             {updateError && (
-                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg">
-                    {updateError}
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg flex items-start">
+                    <AlertCircle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+                    <div>
+                        <p className="font-medium">Error updating profile</p>
+                        <p>{updateError}</p>
+                    </div>
                 </div>
             )}
 
@@ -188,9 +238,12 @@ const ProfileForm = ({ profile }) => {
                             value={formData.fullName}
                             onChange={handleChange}
                             required
-                            className="input-field"
+                            className={`input-field ${validationErrors.fullName ? 'border-red-500' : ''}`}
                             placeholder="Enter your full name"
                         />
+                        {validationErrors.fullName && (
+                            <p className="mt-1 text-sm text-red-600">{validationErrors.fullName}</p>
+                        )}
                     </div>
                 </div>
             </div>
@@ -214,9 +267,12 @@ const ProfileForm = ({ profile }) => {
                             value={formData.location.city}
                             onChange={handleChange}
                             required
-                            className="input-field"
+                            className={`input-field ${validationErrors.city ? 'border-red-500' : ''}`}
                             placeholder="Enter your city"
                         />
+                        {validationErrors.city && (
+                            <p className="mt-1 text-sm text-red-600">{validationErrors.city}</p>
+                        )}
                     </div>
 
                     <div>
@@ -230,9 +286,12 @@ const ProfileForm = ({ profile }) => {
                             value={formData.location.zipCode}
                             onChange={handleChange}
                             required
-                            className="input-field"
+                            className={`input-field ${validationErrors.zipCode ? 'border-red-500' : ''}`}
                             placeholder="Enter your ZIP code"
                         />
+                        {validationErrors.zipCode && (
+                            <p className="mt-1 text-sm text-red-600">{validationErrors.zipCode}</p>
+                        )}
                     </div>
                 </div>
             </div>
@@ -240,7 +299,7 @@ const ProfileForm = ({ profile }) => {
             {/* Skills Section */}
             <div className="card p-6">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                    <Briefcase  className="h-5 w-5 mr-2 text-primary-600" />
+                    <Briefcase className="h-5 w-5 mr-2 text-primary-600" />
                     Skills
                 </h2>
 
@@ -276,6 +335,7 @@ const ProfileForm = ({ profile }) => {
                             type="text"
                             value={newSkill}
                             onChange={(e) => setNewSkill(e.target.value)}
+                            onKeyPress={handleKeyPress}
                             className="input-field flex-1"
                             placeholder="Add a skill"
                         />
