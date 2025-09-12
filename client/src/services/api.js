@@ -2,7 +2,7 @@ import axios from "axios";
 
 const api = axios.create({
     
-    baseURL: "https://volunteer-platform-backend-ztfm.onrender.com/api",
+    baseURL: import.meta.env.VITE_API_URL,
     withCredentials: true, 
 });
 
