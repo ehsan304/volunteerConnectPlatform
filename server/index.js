@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import cookieParser from 'cookie-parser'; 
+import cookieParser from 'cookie-parser';
 import connectDB from './config/database.js';
 import authRoutes from './routes/auth.route.js';
 import errorHandler from './middleware/errorHandler.js';
@@ -20,12 +20,15 @@ const app = express();
 connectDB();
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: [
+        'https://volunteer-connect-platform.vercel.app/',
+        'http://localhost:3000' // for local development
+    ],
     credentials: true
 }));
 
 
-app.use(cookieParser());  
+app.use(cookieParser());
 
 
 app.use((req, res, next) => {
