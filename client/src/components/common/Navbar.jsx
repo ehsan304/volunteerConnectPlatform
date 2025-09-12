@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Menu, X, User, LogOut, HeartHandshake } from 'lucide-react';
+import { Menu, X, User, LogOut, HeartHandshake, Briefcase, Plus } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const Navbar = () => {
@@ -46,6 +46,26 @@ const Navbar = () => {
                                 )}
                                 {user?.role === 'organizer' && (
                                     <>
+                                    // In src/components/common/Navbar.jsx
+                                        // Update the organizer section to include the create opportunity link
+                                        {user?.role === 'organizer' && (
+                                            <>
+                                                <Link
+                                                    to="/my-opportunities"
+                                                    className="flex items-center text-gray-600 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300"
+                                                >
+                                                    <Briefcase className="h-4 w-4 mr-1" />
+                                                    Dashboard
+                                                </Link>
+                                                <Link
+                                                    to="/opportunities/create"
+                                                    className="flex items-center text-gray-600 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300"
+                                                >
+                                                    <Plus className="h-4 w-4 mr-1" />
+                                                    New Opportunity
+                                                </Link>
+                                            </>
+                                        )}
                                         <Link
                                             to="/my-opportunities"
                                             className="text-gray-600 hover:text-primary-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-300"

@@ -32,4 +32,5 @@ export const opportunitiesAPI = {
     create: (data) => api.post('/opportunities', data),      // POST /api/opportunities
     update: (id, data) => api.put(`/opportunities/${id}`, data), // PUT /api/opportunities/:id
     delete: (id) => api.delete(`/opportunities/${id}`),      // DELETE /api/opportunities/:id
+    // delete: (id) => api.delete(`/opportunities/${id}`),
 };

@@ -9,8 +9,10 @@ import Signup from './pages/Signup';
 import Profile from './pages/Profile';
 import './index.css';
 import OrganizerDashboard from './pages/OrganizerDashboard';
-import OpportunityDetail from './pages/OpportunityDetail'; 
+import OpportunityDetail from './pages/OpportunityDetail';
 import Opportunities from './pages/Opportunities'; // Add this import
+import CreateOpportunity from './pages/CreateOpportunity'; // Add this import
+import EditOpportunity from './pages/EditOpportunity';
 
 function App() {
   return (
@@ -35,13 +37,35 @@ function App() {
                 <Route
                   path="/my-opportunities"
                   element={
-                    <ProtectedRoute requiredRole="organizer">
+                    <ProtectedRoute 
+                    // requiredRole="organizer"
+                    >
                       <OrganizerDashboard />
                     </ProtectedRoute>
                   }
                 />
                 <Route path="/opportunities" element={<Opportunities />} /> {/* Add this route */}
                 <Route path="/opportunities/:id" element={<OpportunityDetail />} /> {/* Add this route */}
+                <Route
+                  path="/opportunities/create"
+                  element={
+                    <ProtectedRoute 
+                    // requiredRole="organizer"
+                    >
+                      <CreateOpportunity />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/opportunities/:id/edit"
+                  element={
+                    <ProtectedRoute 
+                    // requiredRole="organizer"
+                    >
+                      <EditOpportunity />
+                    </ProtectedRoute>
+                  }
+                />
                 {/* Add more routes as we create more pages */}
               </Routes>
             </main>
