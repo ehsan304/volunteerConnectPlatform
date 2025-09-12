@@ -1,4 +1,3 @@
-// server/middleware/rbac.js
 import { ForbiddenError } from '../utils/AppError.js';
 
 // Restrict to specific roles

@@ -15,7 +15,7 @@ router.use(protect);
 
 // Volunteer routes
 router.post('/',
-    // restrictTo('volunteer'),
+    restrictTo('volunteer'),
     createApplication);
 
 

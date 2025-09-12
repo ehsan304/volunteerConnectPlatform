@@ -1,4 +1,3 @@
-
 import express from 'express';
 import { validateSignup, validateLogin } from '../middleware/validation/authValidation.js';
 import { signup, login, verifyToken, logout } from '../controllers/auth.controller.js';

@@ -1,4 +1,3 @@
-// server/controllers/profileController.js
 import Profile from '../models/Profile.model.js';
 import { NotFoundError, InternalServerError, BadRequestError } from '../utils/AppError.js';
 

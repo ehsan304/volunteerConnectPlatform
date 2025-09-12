@@ -1,4 +1,3 @@
-// server/middleware/validation/validateRequest.js
 import { validationResult } from 'express-validator';
 import { ValidationError } from '../../utils/AppError.js';
 

@@ -1,4 +1,3 @@
-// server/index.js
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -15,45 +14,35 @@ import applicationRoutes from './routes/application.route.js';
 // Load environment variables
 dotenv.config();
 
-// Initialize Express application
+
 const app = express();
 
 connectDB();
 
-// ✅ Allow cookies to be sent from frontend (adjust origin if needed)
 app.use(cors({
-    origin: 'http://localhost:5173', // your React app
+    origin: 'http://localhost:5173',
     credentials: true
 }));
 
 
-app.use(cookieParser());  // ✅ parse cookies
+app.use(cookieParser());  
 
 
-// Middlewares
-// app.use(cors());
-// Add this right after your CORS middleware in server/index.js
 app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
     next();
 });
 app.use(express.json({ limit: '10mb' }));
-// Add this before your other routes in server/index.js
-// Add this before your other routes in server/index.js
+
 app.get('/api/test', (req, res) => {
     console.log('Test route hit');
     res.json({ message: 'Test successful', timestamp: new Date().toISOString() });
 });
-// Health check route
-app.get('/api/health', (req, res) => {
-    res.status(200).json({ success: true, message: 'Server is up and running!' });
-});
+
 
 
 // API Routes
-console.log("first")
 app.use('/api/auth', authRoutes);
-console.log("second1")
 app.use('/api/profile', profileRoutes);
 app.use('/api/opportunities', opportunityRoutes);
 app.use('/api/match', matchRoutes);
@@ -71,9 +60,8 @@ app.use('/', (req, res) => {
 // Use the global error handling middleware (must be the last middleware)
 app.use(errorHandler);
 
-// Define the port
-const PORT = process.env.PORT
-// || 5000;
+
+const PORT = process.env.PORT || 5001
 
 // Start the server
 app.listen(PORT,

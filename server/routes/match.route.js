@@ -1,4 +1,3 @@
-// server/routes/match.js
 import express from 'express';
 import protect from '../middleware/auth.js';
 import restrictTo from '../middleware/rbac.js';

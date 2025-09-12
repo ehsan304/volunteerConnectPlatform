@@ -44,7 +44,7 @@ userSchema.methods.correctPassword = async function (candidatePassword, userPass
 
 // Static method to find user by email for login
 userSchema.statics.findByEmail = function (email) {
-    return this.findOne({ email }).select('+password +role'); // Explicitly include password
+    return this.findOne({ email }).select('+password +role'); // Explicitly include password & role
 };
 
 const User = mongoose.model('User', userSchema);

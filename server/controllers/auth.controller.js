@@ -1,13 +1,12 @@
-
 import User from '../models/User.model.js';
 import Profile from '../models/Profile.model.js';
 import generateToken from '../utils/generateToken.js';
 import { BadRequestError, InternalServerError } from '../utils/AppError.js';
-console.log("outside controller")
+
+
+
 // Signup controller
 export const signup = async (req, res, next) => {
-    console.log("inside controller")
-    console.log("request reaches here")
     try {
         const { email, password, role } = req.body;
 
@@ -50,14 +49,12 @@ export const signup = async (req, res, next) => {
         });
 
 
-        // Remove password from response
-        // const userResponse = { ...user.toObject() };
+
         const userResponse = {
             _id: user._id,
             email: user.email,
-            role: user.role // ✅ include role here
+            role: user.role
         };
-        // delete userResponse.password;
 
         res.status(201).json({
             success: true,
@@ -100,14 +97,14 @@ export const login = async (req, res, next) => {
         });
 
 
-        // Remove password from response
+    
         const userResponse = {
             _id: user._id,
             email: user.email,
             role: user.role // ✅ include role here
         };
-        // delete userResponse.password;
-        console.log("i am", userResponse)
+        
+        
         res.status(200).json({
             success: true,
             message: 'Login successful',
@@ -125,14 +122,14 @@ export const login = async (req, res, next) => {
 // ✅ Verify Token
 export const verifyToken = async (req, res, next) => {
     try {
-        // `protect` middleware already added `req.user`
+        
         res.json({
             success: true,
             user: {
                 _id: req.user._id,
                 name: req.user.name,
                 email: req.user.email,
-                role: req.user.role, // ✅ add this
+                role: req.user.role, 
             },
         });
     } catch (error) {
