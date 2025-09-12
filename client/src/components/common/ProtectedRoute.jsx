@@ -1,4 +1,3 @@
-// src/components/common/ProtectedRoute.jsx
 import { useAuth } from '../../contexts/AuthContext';
 import { Navigate, useLocation } from 'react-router-dom';
 import LoadingSpinner from './LoadingSpinner';
@@ -19,13 +18,11 @@ const ProtectedRoute = ({ children, requiredRole = null }) => {
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
-    if (requiredRole && user.role !== requiredRole) {
-        // Redirect to appropriate dashboard based on role
-        if (user.role === 'volunteer') {
-            return <Navigate to="/profile" replace />;
-        } else if (user.role === 'organizer') {
-            return <Navigate to="/my-opportunities" replace />;
-        }
+    // Role-based access
+    if (requiredRole && user?.role !== requiredRole) {
+        // Redirect based on role
+        if (user?.role === 'volunteer') return <Navigate to="/profile" replace />;
+        if (user?.role === 'organizer') return <Navigate to="/my-opportunities" replace />;
 
         return (
             <div className="min-h-screen flex items-center justify-center">

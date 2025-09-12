@@ -7,7 +7,6 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Profile from './pages/Profile';
-import './index.css';
 import OrganizerDashboard from './pages/OrganizerDashboard';
 import OpportunityDetail from './pages/OpportunityDetail';
 import Opportunities from './pages/Opportunities';
@@ -15,8 +14,7 @@ import CreateOpportunity from './pages/CreateOpportunity';
 import EditOpportunity from './pages/EditOpportunity';
 import ApplicationsManagement from './pages/ApplicationsManagement';
 import MyApplications from './pages/MyApplications';
-
-
+import './index.css';
 
 function App() {
   return (
@@ -30,32 +28,35 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
+
+                {/* Volunteer Profile */}
                 <Route
                   path="/profile"
                   element={
-                    <ProtectedRoute>
+                    <ProtectedRoute requiredRole="volunteer">
                       <Profile />
                     </ProtectedRoute>
                   }
                 />
+
+                {/* Organizer Dashboard */}
                 <Route
                   path="/my-opportunities"
                   element={
-                    <ProtectedRoute
-                    // requiredRole="organizer"
-                    >
+                    <ProtectedRoute requiredRole="organizer">
                       <OrganizerDashboard />
                     </ProtectedRoute>
                   }
                 />
-                <Route path="/opportunities" element={<Opportunities />} /> 
+
+                <Route path="/opportunities" element={<Opportunities />} />
                 <Route path="/opportunities/:id" element={<OpportunityDetail />} />
+
+                {/* Organizer-only routes */}
                 <Route
                   path="/opportunities/create"
                   element={
-                    <ProtectedRoute
-                    // requiredRole="organizer"
-                    >
+                    <ProtectedRoute requiredRole="organizer">
                       <CreateOpportunity />
                     </ProtectedRoute>
                   }
@@ -63,32 +64,25 @@ function App() {
                 <Route
                   path="/opportunities/:id/edit"
                   element={
-                    <ProtectedRoute
-                    // requiredRole="organizer"
-                    >
+                    <ProtectedRoute requiredRole="organizer">
                       <EditOpportunity />
                     </ProtectedRoute>
                   }
                 />
-                
-
-                // Add these routes
                 <Route
                   path="/opportunities/:opportunityId/applications"
                   element={
-                    <ProtectedRoute 
-                    // requiredRole="organizer"
-                    >
+                    <ProtectedRoute requiredRole="organizer">
                       <ApplicationsManagement />
                     </ProtectedRoute>
                   }
                 />
+
+                {/* Volunteer-only routes */}
                 <Route
                   path="/my-applications"
                   element={
-                    <ProtectedRoute 
-                    // requiredRole="volunteer"
-                    >
+                    <ProtectedRoute requiredRole="volunteer">
                       <MyApplications />
                     </ProtectedRoute>
                   }
@@ -103,6 +97,3 @@ function App() {
 }
 
 export default App;
-
-
-

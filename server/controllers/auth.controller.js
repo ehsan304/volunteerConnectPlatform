@@ -132,6 +132,7 @@ export const verifyToken = async (req, res, next) => {
                 _id: req.user._id,
                 name: req.user.name,
                 email: req.user.email,
+                role: req.user.role, // ✅ add this
             },
         });
     } catch (error) {
