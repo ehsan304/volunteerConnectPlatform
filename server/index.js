@@ -37,10 +37,6 @@ app.use((req, res, next) => {
 });
 app.use(express.json({ limit: '10mb' }));
 
-app.get('/api/test', (req, res) => {
-    console.log('Test route hit');
-    res.json({ message: 'Test successful', timestamp: new Date().toISOString() });
-});
 
 
 

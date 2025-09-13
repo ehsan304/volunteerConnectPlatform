@@ -1,9 +1,9 @@
 import axios from "axios";
 
 const api = axios.create({
-    
+
     baseURL: import.meta.env.VITE_API_URL || "http://localhost:5001/",
-    withCredentials: true, 
+    withCredentials: true,
 });
 
 export const authAPI = {
@@ -20,13 +20,13 @@ export const profileAPI = {
 
 
 export const opportunitiesAPI = {
-    getAll: () => api.get('/opportunities'),                 
-    getOne: (id) => api.get(`/opportunities/${id}`),        
+    getAll: () => api.get('/opportunities'),
+    getOne: (id) => api.get(`/opportunities/${id}`),
 
-    getMy: () => api.get('/opportunities/my/opportunities'), 
-    create: (data) => api.post('/opportunities', data),     
-    update: (id, data) => api.put(`/opportunities/${id}`, data), 
-    delete: (id) => api.delete(`/opportunities/${id}`),      
+    getMy: () => api.get('/opportunities/my/opportunities'),
+    create: (data) => api.post('/opportunities', data),
+    update: (id, data) => api.put(`/opportunities/${id}`, data),
+    delete: (id) => api.delete(`/opportunities/${id}`),
 };
 
 
@@ -35,4 +35,10 @@ export const applicationsAPI = {
     getMyApplications: () => api.get('/applications/my-applications'),
     getOpportunityApplications: (opportunityId) => api.get(`/applications/opportunity/${opportunityId}`),
     updateStatus: (id, status) => api.patch(`/applications/${id}/status`, { status }),
+};
+
+
+
+export const matchingAPI = {
+    getMatches: () => api.get('/match'),
 };

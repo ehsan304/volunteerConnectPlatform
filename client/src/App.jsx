@@ -14,6 +14,7 @@ import CreateOpportunity from './pages/CreateOpportunity';
 import EditOpportunity from './pages/EditOpportunity';
 import ApplicationsManagement from './pages/ApplicationsManagement';
 import MyApplications from './pages/MyApplications';
+import MatchingResults from './pages/MatchingResults';
 import './index.css';
 
 function App() {
@@ -28,7 +29,6 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
-
                 {/* Volunteer Profile */}
                 <Route
                   path="/profile"
@@ -84,6 +84,16 @@ function App() {
                   element={
                     <ProtectedRoute requiredRole="volunteer">
                       <MyApplications />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/matches"
+                  element={
+                    <ProtectedRoute
+                      requiredRole="volunteer"
+                    >
+                      <MatchingResults />
                     </ProtectedRoute>
                   }
                 />
