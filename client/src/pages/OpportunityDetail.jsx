@@ -5,13 +5,14 @@ import { opportunitiesAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ApplicationForm from '../components/opportunities/ApplicationForm';
+import InteractiveMap from '../components/map/InteractiveMap';
 
 const OpportunityDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { user, isAuthenticated } = useAuth();
     const userRole = user?.role || null;
-
+    const [userLocation, setUserLocation] = useState(null);
     const [opportunity, setOpportunity] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -43,6 +44,22 @@ const OpportunityDetail = () => {
             setLoading(false);
         }
     };
+    useEffect(() => {
+        if (navigator.geolocation && opportunity?.location?.coordinates) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setUserLocation({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    });
+                },
+                (error) => {
+                    console.log('Geolocation error:', error);
+                }
+            );
+        }
+    }, [opportunity]);
+
 
     const checkApplicationStatus = (opp) => {
         const hasApplied = opp.volunteersRegistered?.some(volunteer =>
@@ -199,6 +216,19 @@ const OpportunityDetail = () => {
                                 <Users className="h-6 w-6 text-primary-600 mx-auto mb-2" />
                                 <p className="text-sm text-gray-600">Volunteers</p>
                                 <p className="font-semibold">{calculateSpotsLeft()} spots left</p>
+                            </div>
+                            <div className="mb-8">
+                                <h2 className="text-xl font-semibold text-gray-800 mb-4">Location</h2>
+                                <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                                    <p className="text-gray-600">{opportunity.location.address}</p>
+                                    <p className="text-gray-600">{opportunity.location.city}, {opportunity.location.zipCode}</p>
+                                </div>
+                                <div className="h-64 rounded-lg overflow-hidden">
+                                    <InteractiveMap
+                                        opportunities={[opportunity]}
+                                        userLocation={userLocation}
+                                    />
+                                </div>
                             </div>
                         </div>
 

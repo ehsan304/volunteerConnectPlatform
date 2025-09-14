@@ -3,7 +3,7 @@ import { MapPin, Calendar, Users, Clock, Filter, Search, X } from 'lucide-react'
 import { opportunitiesAPI } from '../services/api';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { Link } from 'react-router-dom';
-
+import InteractiveMap from '../components/map/InteractiveMap';
 const Opportunities = () => {
     const [opportunities, setOpportunities] = useState([]);
     const [filteredOpportunities, setFilteredOpportunities] = useState([]);
@@ -16,6 +16,8 @@ const Opportunities = () => {
         date: ''
     });
     const [showFilters, setShowFilters] = useState(false);
+    const [userLocation, setUserLocation] = useState(null);
+    const [showMap, setShowMap] = useState(false);
 
     useEffect(() => {
         fetchOpportunities();
@@ -98,6 +100,21 @@ const Opportunities = () => {
             date: ''
         });
     };
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setUserLocation({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    });
+                },
+                (error) => {
+                    console.log('Geolocation error:', error);
+                }
+            );
+        }
+    }, []);
 
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -151,6 +168,15 @@ const Opportunities = () => {
             {/* Content */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Search and Filters */}
+                <div className="flex flex-col md:flex-row gap-4 mb-4">
+                    <button
+                        onClick={() => setShowMap(!showMap)}
+                        className="flex items-center justify-center gap-2 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                        <MapPin className="h-5 w-5" />
+                        {showMap ? 'Hide Map' : 'Show Map'}
+                    </button>
+                </div>
                 <div className="mb-8">
                     <div className="flex flex-col md:flex-row gap-4 mb-4">
                         <div className="relative flex-1">
@@ -256,6 +282,15 @@ const Opportunities = () => {
                         )}
                     </div>
                 </div>
+                {showMap && (
+                    <div className="mb-6 card p-4">
+                        <h2 className="text-xl font-semibold text-gray-800 mb-4">Opportunities Map</h2>
+                        <InteractiveMap
+                            opportunities={filteredOpportunities}
+                            userLocation={userLocation}
+                        />
+                    </div>
+                )}
 
                 {/* Opportunities Grid */}
                 {filteredOpportunities.length === 0 ? (
