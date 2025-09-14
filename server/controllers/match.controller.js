@@ -3,18 +3,21 @@ import Profile from '../models/Profile.model.js';
 import { calculateDistance, calculateStraightLineDistance } from '../utils/distanceCalculator.js';
 import { NotFoundError, InternalServerError } from '../utils/AppError.js';
 
-// Calculate skill match score (0-100)
-const calculateSkillMatch = (volunteerSkills, opportunitySkills) => {
-    if (!volunteerSkills.length || !opportunitySkills.length) return 0;
 
-    const matchingSkills = volunteerSkills.filter(skill =>
-        opportunitySkills.some(oppSkill =>
-            oppSkill.toLowerCase().includes(skill.toLowerCase()) ||
-            skill.toLowerCase().includes(oppSkill.toLowerCase())
+const calculateSkillMatch = (volunteerSkills, opportunitySkills) => {
+    const safeVolunteerSkills = Array.isArray(volunteerSkills) ? volunteerSkills : [];
+    const safeOpportunitySkills = Array.isArray(opportunitySkills) ? opportunitySkills : [];
+
+    if (!safeVolunteerSkills.length || !safeOpportunitySkills.length) return 0;
+
+    const matchingSkills = safeVolunteerSkills.filter(skill =>
+        safeOpportunitySkills.some(oppSkill =>
+            String(oppSkill).toLowerCase().includes(String(skill).toLowerCase()) ||
+            String(skill).toLowerCase().includes(String(oppSkill).toLowerCase())
         )
     );
 
-    return (matchingSkills.length / opportunitySkills.length) * 100;
+    return (matchingSkills.length / safeOpportunitySkills.length) * 100;
 };
 
 // Get matched opportunities for a volunteer

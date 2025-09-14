@@ -48,10 +48,17 @@ const opportunitySchema = new mongoose.Schema({
             // required: true
         }
     },
-    requiredSkills: [{
-        type: String,
-        trim: true
-    }],
+    
+    requiredSkills: {
+        type: [String],
+        default: [],
+        validate: {
+            validator: function (v) {
+                return Array.isArray(v);
+            },
+            message: 'Required skills must be an array'
+        }
+    },
     date: {
         type: Date,
         required: [true, 'Please provide a date for the opportunity']

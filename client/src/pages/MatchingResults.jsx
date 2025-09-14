@@ -21,7 +21,10 @@ const MatchingResults = () => {
         try {
             setLoading(true);
             const response = await matchingAPI.getMatches();
-            setMatches(response.data);
+
+            // Ensure response.data is always an array
+            const data = Array.isArray(response.data) ? response.data : [];
+            setMatches(data);
             setError(null);
         } catch (error) {
             console.error('Error fetching matches:', error);
@@ -43,29 +46,36 @@ const MatchingResults = () => {
     };
 
     const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
         const options = { year: 'numeric', month: 'short', day: 'numeric' };
         return new Date(dateString).toLocaleDateString(undefined, options);
     };
 
     const getUniqueSkills = () => {
-        const allSkills = matches.flatMap(match =>
-            match.opportunity.requiredSkills || []
+        const safeMatches = Array.isArray(matches) ? matches : [];
+        const allSkills = safeMatches.flatMap(match =>
+            Array.isArray(match.opportunity?.requiredSkills)
+                ? match.opportunity.requiredSkills
+                : []
         );
-        return ['all', ...new Set(allSkills)].filter(skill => skill);
+        return ['all', ...new Set(allSkills)].filter(Boolean);
     };
 
-    const filteredAndSortedMatches = matches
+    const safeMatches = Array.isArray(matches) ? matches : [];
+
+    const filteredAndSortedMatches = safeMatches
         .filter(match => {
             if (filterSkill === 'all') return true;
-            return match.opportunity.requiredSkills?.includes(filterSkill);
+            return Array.isArray(match.opportunity?.requiredSkills) &&
+                match.opportunity.requiredSkills.includes(filterSkill);
         })
         .sort((a, b) => {
             if (sortBy === 'skills') {
-                return b.matchScore.skills - a.matchScore.skills;
+                return (b.matchScore?.skills || 0) - (a.matchScore?.skills || 0);
             } else if (sortBy === 'distance') {
-                return a.matchScore.distance - b.matchScore.distance;
+                return (a.matchScore?.distance ?? Infinity) - (b.matchScore?.distance ?? Infinity);
             }
-            return b.matchScore.overall - a.matchScore.overall;
+            return (b.matchScore?.overall || 0) - (a.matchScore?.overall || 0);
         });
 
     if (loading) {
@@ -104,6 +114,7 @@ const MatchingResults = () => {
                             </div>
                         )}
 
+                        {/* Filters */}
                         <div className="flex flex-col md:flex-row gap-4 mb-6">
                             <div className="flex items-center gap-2">
                                 <Filter className="h-5 w-5 text-gray-600" />
@@ -135,6 +146,7 @@ const MatchingResults = () => {
                             </div>
                         </div>
 
+                        {/* Results */}
                         {filteredAndSortedMatches.length === 0 ? (
                             <div className="text-center py-8">
                                 <div className="text-gray-400 mb-4">
@@ -159,7 +171,7 @@ const MatchingResults = () => {
                             <div className="grid gap-6">
                                 {filteredAndSortedMatches.map((match, index) => (
                                     <div
-                                        key={match.opportunity._id}
+                                        key={match.opportunity?._id || index}
                                         className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow"
                                     >
                                         <div className="p-6">
@@ -167,7 +179,7 @@ const MatchingResults = () => {
                                                 <div className="flex-1">
                                                     <div className="flex items-start justify-between">
                                                         <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                                                            {match.opportunity.title}
+                                                            {match.opportunity?.title || 'Untitled Opportunity'}
                                                         </h3>
                                                         {index === 0 && (
                                                             <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-1 rounded-full ml-2">
@@ -177,24 +189,26 @@ const MatchingResults = () => {
                                                     </div>
 
                                                     <p className="text-gray-600 mb-4 line-clamp-2">
-                                                        {match.opportunity.description}
+                                                        {match.opportunity?.description || 'No description provided.'}
                                                     </p>
 
                                                     <div className="flex flex-wrap gap-4 text-sm text-gray-600">
                                                         <div className="flex items-center">
                                                             <MapPin className="h-4 w-4 mr-1 text-primary-600" />
                                                             <span>
-                                                                {match.opportunity.location.city}, {match.opportunity.location.zipCode}
+                                                                {match.opportunity?.location?.city || 'Unknown'},{' '}
+                                                                {match.opportunity?.location?.zipCode || ''}
                                                             </span>
                                                         </div>
                                                         <div className="flex items-center">
                                                             <Calendar className="h-4 w-4 mr-1 text-primary-600" />
-                                                            <span>{formatDate(match.opportunity.date)}</span>
+                                                            <span>{formatDate(match.opportunity?.date)}</span>
                                                         </div>
                                                         <div className="flex items-center">
                                                             <Users className="h-4 w-4 mr-1 text-primary-600" />
                                                             <span>
-                                                                {match.opportunity.volunteersRegistered?.length || 0} / {match.opportunity.volunteersNeeded}
+                                                                {match.opportunity?.volunteersRegistered?.length || 0} /{' '}
+                                                                {match.opportunity?.volunteersNeeded || 0}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -204,21 +218,21 @@ const MatchingResults = () => {
                                                     <div className="bg-gray-50 rounded-lg p-4 min-w-[120px]">
                                                         <div className="text-center mb-2">
                                                             <span className="text-2xl font-bold text-primary-600">
-                                                                {match.matchScore.overall}%
+                                                                {match.matchScore?.overall || 0}%
                                                             </span>
                                                             <div className="text-xs text-gray-600">Overall Match</div>
                                                         </div>
 
                                                         <div className="grid grid-cols-2 gap-2 text-xs">
                                                             <div className="text-center">
-                                                                <span className={`font-medium ${getSkillMatchColor(match.matchScore.skills)}`}>
-                                                                    {match.matchScore.skills}%
+                                                                <span className={`font-medium ${getSkillMatchColor(match.matchScore?.skills || 0)}`}>
+                                                                    {match.matchScore?.skills || 0}%
                                                                 </span>
                                                                 <div className="text-gray-600">Skills</div>
                                                             </div>
                                                             <div className="text-center">
                                                                 <span className="font-medium text-gray-700">
-                                                                    {match.matchScore.distance || '?'}mi
+                                                                    {match.matchScore?.distance ?? '?'}mi
                                                                 </span>
                                                                 <div className="text-gray-600">Distance</div>
                                                             </div>
@@ -230,28 +244,29 @@ const MatchingResults = () => {
                                             <div className="mb-4">
                                                 <h4 className="font-medium text-gray-800 mb-2">Required Skills:</h4>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {match.opportunity.requiredSkills?.map((skill, idx) => (
-                                                        <span
-                                                            key={idx}
-                                                            className="px-2 py-1 bg-primary-100 text-primary-800 text-xs rounded-full"
-                                                        >
-                                                            {skill}
-                                                        </span>
-                                                    ))}
+                                                    {Array.isArray(match.opportunity?.requiredSkills) &&
+                                                        match.opportunity.requiredSkills.map((skill, idx) => (
+                                                            <span
+                                                                key={idx}
+                                                                className="px-2 py-1 bg-primary-100 text-primary-800 text-xs rounded-full"
+                                                            >
+                                                                {skill}
+                                                            </span>
+                                                        ))}
                                                 </div>
                                             </div>
 
                                             <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
                                                 <div className="text-sm text-gray-600">
-                                                    <p>{getDistanceText(match.matchScore.distance)}</p>
-                                                    {match.matchScore.duration && (
+                                                    <p>{getDistanceText(match.matchScore?.distance)}</p>
+                                                    {match.matchScore?.duration && (
                                                         <p>Approx. {match.matchScore.duration} travel time</p>
                                                     )}
                                                 </div>
 
                                                 <div className="flex gap-2">
                                                     <Link
-                                                        to={`/opportunities/${match.opportunity._id}`}
+                                                        to={`/opportunities/${match.opportunity?._id || ''}`}
                                                         className="btn-primary"
                                                     >
                                                         View Details
